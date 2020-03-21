@@ -3,8 +3,8 @@ import Transaction from "./Transaction";
 
 class Transactions extends Component {
   
-    deleteTransaction = (transaction) => {
-        this.props.deleteTransaction(transaction)
+    deleteTransaction = (id) => {
+        this.props.deleteTransaction(id)
     }
   
     render() {

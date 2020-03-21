@@ -1,50 +1,69 @@
 import React, { Component } from "react";
 import logo from "./logo.svg";
-import shortid from 'shortid';
+import shortid from "shortid";
 import "./App.css";
 import Transactions from "./Components/Transactions";
 import Operations from "./Components/Operations";
+import Axios from "axios";
+import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom";
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
-      transactions: [
-        { id: 1, amount: 3200, vendor: "Elevation", category: "Salary" },
-        { id: 2, amount: -7, vendor: "Runescape", category: "Entertainment" },
-        { id: 3, amount: -20, vendor: "Subway", category: "Food" },
-        { id: 4, amount: -98, vendor: "La Baguetterie", category: "Food" }
-      ],
+      transactions: [],
       sum: 0
     };
+  }
+
+  async getData() {
+    let data = await Axios.get("http://localhost:3001/transactions");
+    console.log(`data`);
+    return data;
+  }
+
+  async postData(amount, vendor, category) {
+    let toAdd = {
+      amount,
+      vendor,
+      category
+    };
+    await Axios.post("http://localhost:3001/transaction", toAdd);
+  }
+
+  async componentDidMount() {
+    const response = await this.getData();
+    this.setState({ transactions: response.data });
+    console.log(this.state.sum);
+    this.calcSum();
   }
 
   DepositTransaction = (amount, vendor, category) => {
     parseInt(amount);
     let temp = [...this.state.transactions];
-    temp.push({ amount, vendor, category, id: shortid.generate(), });
+    temp.push({ amount, vendor, category, _id: shortid.generate() });
     this.setState({
       transactions: temp
     });
+    this.postData(amount, vendor, category);
   };
 
   withdrawTransaction = (amount, vendor, category) => {
     parseInt(amount);
     amount = -amount;
     let temp = [...this.state.transactions];
-    temp.push({ amount, vendor, category, id: shortid.generate(), });
+    temp.push({ amount, vendor, category, _id: shortid.generate() });
     this.setState({
       transactions: temp
     });
+    this.postData(amount, vendor, category);
   };
 
-  deleteTransaction = id => {
-    let trans = [...this.state.transactions]
-    trans.splice(trans.findIndex(t => t.id === id),1)
-    this.setState({
-      transactions: trans
-    })
-  }
+  deleteTransaction = async(id) => {
+    await Axios.delete(`http://localhost:3001/transaction/${id}`);
+    const transactions = this.state.transactions.filter(t => t._id !== id);
+    this.setState({ transactions });
+  };
 
   calcSum = () => {
     let sum = 0;
@@ -52,24 +71,59 @@ class App extends Component {
     return sum;
   };
 
-  componentDidMount = () => {
-    console.log(this.state.sum);
-    this.calcSum();
-  };
-
   render() {
     return (
-      <div className="App">
-        <div>Total Bank Balance: {this.calcSum()} </div>
-        <Transactions
-          transactions={this.state.transactions}
-          deleteTransaction={this.deleteTransaction}
-        />
-        <Operations
-          DepositTransaction={this.DepositTransaction}
-          withdrawTransaction={this.withdrawTransaction}
-        />
-      </div>
+      <Router>
+        <div className="App">
+          <Link className="link" to="/">
+            Home
+          </Link>
+          <div></div>
+          <Link className="link" to="/transactions">
+            All Transaction
+          </Link>
+          <div></div>
+          <Link className="link" to="/depositAndWithdraw">
+            Deposit And Withdraw
+          </Link>
+
+          <Route
+            exact
+            path="/"
+            render={() => (
+              <div>
+                <div>Welcome TO the Bank</div>
+              </div>
+            )}
+          />
+
+          <Route
+            exact
+            path="/transactions"
+            render={() => (
+              <div>
+                <div>Total Bank Balance: ${this.calcSum()} </div>
+                <Transactions
+                  transactions={this.state.transactions}
+                  deleteTransaction={this.deleteTransaction}
+                />{" "}
+              </div>
+            )}
+          />
+          <Route
+            exact
+            path="/depositAndWithdraw"
+            render={() => (
+              <div>
+                <Operations
+                  DepositTransaction={this.DepositTransaction}
+                  withdrawTransaction={this.withdrawTransaction}
+                />
+              </div>
+            )}
+          />
+        </div>
+      </Router>
     );
   }
 }

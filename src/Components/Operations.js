@@ -11,6 +11,14 @@ class Operations extends Component {
   }
 
   DepositTransaction = () => {
+    if (
+      this.state.amount == "" ||
+      this.state.vendor == "" ||
+      this.state.category == ""
+    ) {
+      alert("You have to Put Values!");
+      return
+    }
     this.props.DepositTransaction(
       this.state.amount,
       this.state.vendor,
@@ -19,13 +27,20 @@ class Operations extends Component {
   };
 
   withdrawTransaction = () => {
+    if (
+      this.state.amount == "" ||
+      this.state.vendor == "" ||
+      this.state.category == ""
+    ) {
+      alert("You have to Put Values!");
+      return
+    }
     this.props.withdrawTransaction(
       this.state.amount,
       this.state.vendor,
       this.state.category
     );
   };
-
 
   changeValue = async event => {
     await this.setState({
@@ -35,7 +50,6 @@ class Operations extends Component {
         ? "vendor"
         : "category"]: event.target.value
     });
-    console.log(this.state);
   };
 
   render() {

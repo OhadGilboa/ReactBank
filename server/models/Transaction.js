@@ -7,6 +7,6 @@ const transactionSchema = new Schema({
   category: String,
   vendor: String
 });
-const Transaction = mongoose.model(`lottery`, transactionSchema);
+const Transaction = mongoose.model(`transaction`, transactionSchema);
 
 module.exports = Transaction;
