@@ -5,7 +5,14 @@ import "./App.css";
 import Transactions from "./Components/Transactions";
 import Operations from "./Components/Operations";
 import Axios from "axios";
-import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  Redirect
+} from "react-router-dom";
+import Header from "./Components/Header";
+import Categories from "./Components/Categories";
 
 class App extends Component {
   constructor() {
@@ -59,7 +66,7 @@ class App extends Component {
     this.postData(amount, vendor, category);
   };
 
-  deleteTransaction = async(id) => {
+  deleteTransaction = async id => {
     await Axios.delete(`http://localhost:3001/transaction/${id}`);
     const transactions = this.state.transactions.filter(t => t._id !== id);
     this.setState({ transactions });
@@ -74,29 +81,25 @@ class App extends Component {
   render() {
     return (
       <Router>
+        <Header />
         <div className="App">
-          <Link className="link" to="/">
-            Home
-          </Link>
-          <div></div>
-          <Link className="link" to="/transactions">
-            All Transaction
-          </Link>
-          <div></div>
-          <Link className="link" to="/depositAndWithdraw">
-            Deposit And Withdraw
-          </Link>
-
           <Route
             exact
             path="/"
             render={() => (
               <div>
-                <div>Welcome TO the Bank</div>
+                <h1>Welcome to G-BANK</h1>
+                <Categories trans={this.state.transactions} />
+                <h3></h3>
+                <h4></h4>
+                <h4>
+                  GO ahead and make your transactions! <br />
+                  For Corona Virus Issues <br />
+                  contact us: +1 0745667788
+                </h4>
               </div>
             )}
           />
-
           <Route
             exact
             path="/transactions"

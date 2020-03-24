@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Popup from "reactjs-popup";
 
 class Operations extends Component {
   constructor() {
@@ -17,7 +18,7 @@ class Operations extends Component {
       this.state.category == ""
     ) {
       alert("You have to Put Values!");
-      return
+      return;
     }
     this.props.DepositTransaction(
       this.state.amount,
@@ -33,7 +34,7 @@ class Operations extends Component {
       this.state.category == ""
     ) {
       alert("You have to Put Values!");
-      return
+      return;
     }
     this.props.withdrawTransaction(
       this.state.amount,
